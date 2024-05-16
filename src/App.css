@@ -1,0 +1,36 @@
+.App{
+  display: flex;
+  justify-content:center;
+}
+.card{
+  position: relative;
+}
+.line{
+  height:1rem;
+  width:3rem;
+}
+.working{
+  background-color:blue;
+}
+.finish{
+  background-color:red;
+}
+
+.tl_finish{
+  text-decoration: line-through;
+  color: color;
+}
+.tl_working{
+  /* color: skyblue; */
+  font-size: large;
+  padding: 0.5rem;
+}
+
+.select{
+  margin-bottom: 1rem;
+  /* height: 20px; */
+}
+
+.mt1rem{
+  margin-top: 1rem;
+}
