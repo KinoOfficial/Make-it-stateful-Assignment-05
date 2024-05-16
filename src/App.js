@@ -1,5 +1,5 @@
 import './App.css';
-import { Card, Button, Input, Collapse,Select} from 'antd';
+import { Card, Button, Input, Collapse,Select, Modal} from 'antd';
 // import TaskList from './TaskList';
 import React, { useState } from 'react';
 function App() {
@@ -15,6 +15,8 @@ function App() {
   const { TextArea } = Input;
   const [taskLabel, setTaskLabel] = useState('');
   const [taskContent, setTaskContent] = useState('');
+  const [editTaskLabel, setEditTaskLabel] = useState('');
+  const [editTaskContent, setEditTaskContent] = useState('');
 
   
   const createTaskList= () => {
@@ -64,6 +66,37 @@ function App() {
     window.location.reload()
   }
 
+
+  //Editing Moadl Setting
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editIndex,setEditIndex] = useState('');
+  const showModal = (index,taskList) => {
+    // console.log(index)
+    // console.log(123)
+    setIsModalOpen(true);
+    setEditIndex(index);
+    // console.log(isModalOpen);
+    // console.log('editIndex',editIndex);
+  };
+  const handleOk = (editIndex) => {
+    console.log('number',+editIndex)
+    // console.log(editTaskLabel)
+    // console.log(editTaskContent)
+    const editedTask=taskList[editIndex];
+    const originalLabel=editedTask.taskLabel;
+
+    editedTask.taskLabel=editTaskLabel;
+    editedTask.taskContent=editTaskContent;
+    localStorage.removeItem('task'+originalLabel)
+    localStorage.setItem('task'+editTaskLabel,JSON.stringify(editedTask))
+    // console.log('editTask',editedTask)
+    setIsModalOpen(false);
+    window.location.reload()
+  };
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+
   //funtion of creating collapse items
   const createItems = (taskList)=>{
     let key=0
@@ -88,8 +121,9 @@ function App() {
               <div className={'tl_working'}>
                 {item.taskContent}
               </div>
-              <Button className="mt1rem">Edit</Button>
+              <Button className="mt1rem" onClick={()=>showModal(index,taskList)}>Edit</Button>
               <Button onClick={()=>taskFinished(index,taskList)}>finish</Button>
+              
               </div>,
             
           }
@@ -140,8 +174,8 @@ function App() {
 
   
   //render return 
-  console.log('this is render item',items)
-  console.log('this is render list',taskList)
+  // console.log('this is render item',items)
+  // console.log('this is render list',taskList)
   return (
     
     <div className="App">
@@ -152,6 +186,10 @@ function App() {
         <Select 
         defaultValue="ShowAll"
         options={[
+          {
+            value: 'showAll',
+            label: 'ShowAll',
+          },
         {
           value: 'unfinished',
           label: 'Unfinished',
@@ -160,15 +198,20 @@ function App() {
           value: 'finished',
           label: 'Finished',
         },
-        {
-          value: 'showAll',
-          label: 'ShowAll',
-        },
+        
       ]} style={{
         width: 120,
       }} className='select' onChange={selectChange}>
         </Select>
         <Collapse accordion items={items} className='mt1rem' />
+        <Modal title="Edit Task" open={isModalOpen} onOk={()=>handleOk(editIndex)} onCancel={handleCancel}>
+              <div>
+                  <span>Please input the task label</span><Input value={editTaskLabel} onChange={(e) => setEditTaskLabel(e.target.value)}></Input>
+              </div>
+              <div className='mt1rem'>
+                  <span>Please input the task content</span><TextArea rows={4} value={editTaskContent} onChange={(e) => setEditTaskContent(e.target.value)}/>
+              </div>
+        </Modal>
         <div className="mt1rem">
           <div>
             <span>Please input the task label</span><Input value={taskLabel} onChange={(e) => setTaskLabel(e.target.value)}></Input>
